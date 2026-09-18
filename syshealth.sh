@@ -43,6 +43,40 @@ DISK_USAGE=$(df -h / | tail -1)
 MEMORY_USAGE=$(free -h | awk '/Mem:/ {print $3 "/" $2}')
 PROCESS_COUNT=$(ps -e | wc -l)
 
+# --- Parse numeric percentages for threshold comparison (Rocky Linux 9 compatible) ---
+# Disk usage percentage for root filesystem (strip the % sign)
+DISK_PCT=$(df / | tail -1 | awk '{gsub("%",""); print $5}')
+# Memory usage percentage (used / total * 100), rounded to integer
+MEM_PCT=$(free | awk '/Mem:/ {printf "%.0f", $3/$2*100}')
+# CPU usage percentage (100 - idle). The top -bn1 method is a common one-liner
+# that works on Rocky Linux 9. Note: This is a brief snapshot; production tools
+# often average over time or use /proc/stat directly.
+CPU_PCT=$(top -bn1 | grep '^%Cpu' | awk '{print 100 - $8}' | cut -d. -f1)
+# --- Health checks with conditionals and color-coded output ---
+print_status "CHECK" "Running system health analysis..."
+HEALTH_STATUS=0 # 0 = healthy (no alerts). Will be set to 1 if any check fails.
+# Disk check for root filesystem
+if (( DISK_PCT > DISK_THRESHOLD )); then
+	print_status "ALERT" "Disk usage on / is ${DISK_PCT}% (threshold ${DISK_THRESHOLD}%)"
+	HEALTH_STATUS=1
+else
+	print_status "OK" "Disk usage on / is ${DISK_PCT}%"
+fi
+# Memory check
+if (( MEM_PCT > MEM_THRESHOLD )); then
+	print_status "ALERT" "Memory usage is ${MEM_PCT}% (threshold ${MEM_THRESHOLD}%)"
+	HEALTH_STATUS=1
+else
+	print_status "OK" "Memory usage is ${MEM_PCT}%"
+fi
+# CPU check
+if (( CPU_PCT > CPU_THRESHOLD )); then
+	print_status "ALERT" "CPU usage is ${CPU_PCT}% (threshold ${CPU_THRESHOLD}%)"
+	HEALTH_STATUS=1
+else
+	print_status "OK" "CPU usage is ${CPU_PCT}%"
+fi
+
 # --- Output handling ---
 OUTPUT_FILE="${1:-}" # if $1 is given, use it; else print to screen
 print_report() {

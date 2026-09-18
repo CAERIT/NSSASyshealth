@@ -13,6 +13,17 @@ CURRENT_DATE=$(date '+%Y-%m-%d %H:%M:%S')
 CPU_THRESHOLD=75
 MEM_THRESHOLD=85
 DISK_THRESHOLD=85
+
+print_status() {
+local status="$1"
+local message="$2"
+	if [ "$status" = "OK" ]; then
+		echo -e "\e[32m OK: $message\e[0m"
+	else
+		echo -e "\e[31m ALERT: $message\e[0m"
+	fi
+}
+
 # IMPORTANT: Quoting demo (Python/Java students read this!)
 # Without quotes → word-splitting bug (try it!)
 # With double quotes → safe (Bash best practice)

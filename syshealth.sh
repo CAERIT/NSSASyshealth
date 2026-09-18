@@ -91,8 +91,12 @@ else
 	print_status "OK" "CPU usage is ${CPU_PCT}%"
 fi
 
+
+
 # --- Final report and exit code handling ---
+OUTPUT_FILE="${1:-}"
 print_report() {
+
 	printf "========================================\n"
 	printf "System Health Report - %s\n" "$CURRENT_DATE"
 	printf "Hostname : %s\n" "$HOSTNAME"
@@ -110,4 +114,4 @@ else
 	print_report
 fi
 # Exit with 0 (healthy) or 1 (alerts triggered). This enables scripting / cron usage.
-exit "${HEALTH_STATUS:-0}
+exit "${HEALTH_STATUS:-0}"

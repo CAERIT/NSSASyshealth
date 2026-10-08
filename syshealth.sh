@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # ================================================
 # syshealth.sh - System Health & Log Analysis Toolkit
-# Lab 1 - Data Collector
-# Author: Your Name
+# Lab 3 - Refactoring into Functions
+# Author: Calvin Eisenhofer
 # Date: $(date +%Y-%m-%d)
 # ===============================================
 
@@ -13,6 +13,13 @@ CURRENT_DATE=$(date '+%Y-%m-%d %H:%M:%S')
 CPU_THRESHOLD=75
 MEM_THRESHOLD=85
 DISK_THRESHOLD=85
+
+main(){
+	parse_arguments	"$@"
+	run_health_checks
+	generate_report
+}
+
 
 print_status() {
 local status="$1"
@@ -115,3 +122,4 @@ else
 fi
 # Exit with 0 (healthy) or 1 (alerts triggered). This enables scripting / cron usage.
 exit "${HEALTH_STATUS:-0}"
+main

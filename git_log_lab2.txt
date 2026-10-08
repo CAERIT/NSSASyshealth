@@ -1,4 +1,5 @@
-* e55a605 (HEAD -> main, origin/main) Add for-loop over multiple mount points and update exit code handling
+* 3c3b3c9 (HEAD -> main) fixed output file
+* e55a605 (origin/main) Add for-loop over multiple mount points and update exit code handling
 * 84b14c2 Add parsing and conditional checks for disk, memory, and CPU
 * 78fe42a Implement print_status function with color-coded output
 * ecbec13 Add threshold variables for CPU, MEM, and DISK

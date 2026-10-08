@@ -14,12 +14,6 @@ CPU_THRESHOLD=75
 MEM_THRESHOLD=85
 DISK_THRESHOLD=85
 
-main(){
-	parse_arguments	"$@"
-	run_health_checks
-	generate_report
-}
-
 
 print_status() {
 local status="$1"
@@ -34,15 +28,15 @@ local message="$2"
 # IMPORTANT: Quoting demo (Python/Java students read this!)
 # Without quotes → word-splitting bug (try it!)
 # With double quotes → safe (Bash best practice)
-echo "Hostname without quotes: $HOSTNAME" # works here but dangerous later
-echo "Hostname with quotes: \"$HOSTNAME\"" # always do this
+#echo "Hostname without quotes: $HOSTNAME" # works here but dangerous later
+#echo "Hostname with quotes: \"$HOSTNAME\"" # always do this
 # Add a comment explaining the difference (required for marks):
-cat << EOF
+#cat << EOF
 # COMMENT FOR GRADER:
 # In Python/Java variables expand safely.
 # In Bash, unquoted \$VAR splits on spaces/tabs/newlines.
 # Always double-quote unless you deliberately want splitting. 
-EOF
+#EOF
 
 # --- System metrics collection ---
 UPTIME=$(uptime -p)
@@ -53,15 +47,23 @@ PROCESS_COUNT=$(ps -e | wc -l)
 # --- Parse numeric percentages for threshold comparison (Rocky Linux 9 compatible) ---
 # Disk usage percentage for root filesystem (strip the % sign)
 DISK_PCT=$(df / | tail -1 | awk '{gsub("%",""); print $5}')
+
+
 # Memory usage percentage (used / total * 100), rounded to integer
 MEM_PCT=$(free | awk '/Mem:/ {printf "%.0f", $3/$2*100}')
 # CPU usage percentage (100 - idle). The top -bn1 method is a common one-liner
 # that works on Rocky Linux 9. Note: This is a brief snapshot; production tools
 # often average over time or use /proc/stat directly.
 CPU_PCT=$(top -bn1 | grep '^%Cpu' | awk '{print 100 - $8}' | cut -d. -f1)
+
+
 # --- Health checks with conditionals and color-coded output ---
 print_status "CHECK" "Running system health analysis..."
 HEALTH_STATUS=0 # 0 = healthy (no alerts). Will be set to 1 if any check fails.
+
+
+
+
 # Disk check for root filesystem
 if (( DISK_PCT > DISK_THRESHOLD )); then
 	print_status "ALERT" "Disk usage on / is ${DISK_PCT}% (threshold ${DISK_THRESHOLD}%)"
@@ -83,6 +85,10 @@ for mount in / /home /var; do
 		print_status "OK" "Mount point $mount does not exist or is not a mountpoint on this system"
 	fi
 done
+
+
+
+
 # Memory check
 if (( MEM_PCT > MEM_THRESHOLD )); then
 	print_status "ALERT" "Memory usage is ${MEM_PCT}% (threshold ${MEM_THRESHOLD}%)"
@@ -122,4 +128,14 @@ else
 fi
 # Exit with 0 (healthy) or 1 (alerts triggered). This enables scripting / cron usage.
 exit "${HEALTH_STATUS:-0}"
+
+
+
+main(){
+	parse_arguments	"$@"
+	run_health_checks
+	generate_report
+}
+
+
 main

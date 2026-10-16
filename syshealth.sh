@@ -272,6 +272,13 @@ printf " Failed logins : %d\n" "$failed_logins"
 }
 
 
+# Temporary test stub (remove before final submission if not needed)
+#if [ "$1" = "--test-logs" ]; then
+#analyze_logs "/var/log/secure" # or any test log you create
+#exit 0
+#fi
+
+
 
 main() {
 	parse_arguments "$@"

@@ -21,6 +21,17 @@ MEM_THRESHOLD=85
 DISK_THRESHOLD=85
 
 
+log_message() {
+	local level="$1"
+	local message="$2"
+	local log_file="$HOME/.syshealth.log"
+	local timestamp
+	timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+	# Ensure log directory exists (in case $HOME is unusual)
+	mkdir -p "$(dirname "$log_file")"
+	echo "$timestamp [$level] $message" >> "$log_file"
+}
+
 print_status() {
 local status="$1"
 local message="$2"

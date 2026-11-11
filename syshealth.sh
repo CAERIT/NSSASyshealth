@@ -298,19 +298,18 @@ printf " Failed logins : %d\n" "$failed_logins"
 
 
 main() {
-	parse_arguments "$@"
-	# Run all health checks (prints colored alerts to terminal)
-	run_health_checks
-	# Generate the structured report (to screen or file)
-	if [ -n "$OUTPUT_FILE" ]; then
-		generate_report > "$OUTPUT_FILE"
-		echo "Report written to $OUTPUT_FILE"
-	else
-		generate_report
-	fi
-	# Exit with the aggregated health status from run_health_checks
-	exit "${HEALTH_STATUS:-0}"
-	}
-
+parse_arguments "$@"
+log_message "INFO" "syshealth.sh started (Lab 5)"
+run_health_checks
+generate_report
+if [ -n "$OUTPUT_FILE" ]; then
+generate_report > "$OUTPUT_FILE"
+echo "Report written to $OUTPUT_FILE"
+log_message "INFO" "Report written to $OUTPUT_FILE"
+else
+generate_report
+fi
+exit "${HEALTH_STATUS:-0}"
+}
 
 main

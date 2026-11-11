@@ -1,12 +1,18 @@
 #!/usr/bin/env bash
 # ================================================
 # syshealth.sh - System Health & Log Analysis Toolkit
-# Lab 3 - Refactoring into Functions
+# Lab 5
 # Author: Calvin Eisenhofer
 # Date: $(date +%Y-%m-%d)
 # ===============================================
 
 # --- Variables and quoting demonstration ---
+set -euo pipefail
+# Trap for logging on error or unexpected exit
+trap 'log_message "ERROR" "Script exited unexpectedly with code $?"' ERR
+trap 'log_message "INFO" "Script finished normally with code $?"' EXI
+
+
 HOSTNAME=$(hostname)
 CURRENT_DATE=$(date '+%Y-%m-%d %H:%M:%S')
 # --- Thresholds (change these values to test alert behavior) ---

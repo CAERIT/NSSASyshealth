@@ -437,21 +437,33 @@ esac
 
 
 
-
-
-main() {
+main(){
 parse_arguments "$@"
-log_message "INFO" "syshealth.sh started (Lab 6)"
-run_health_checks
-generate_report
-if [ -n "$OUTPUT_FILE" ]; then
-generate_report > "$OUTPUT_FILE"
-echo "Report written to $OUTPUT_FILE"
-log_message "INFO" "Report written to $OUTPUT_FILE"
-else
-generate_report
-fi
+log_message "INFO" "syshealth.sh started in mode: $
+{MODE:-report}"
+run_mode
+# For monitor/analyze modes that don't already exit inside
+generate_repor
+t
+if [ "${MODE:-report}" != "report" ]; then
 exit "${HEALTH_STATUS:-0}"
+fi
 }
+
+
+#main() {
+#parse_arguments "$@"
+#log_message "INFO" "syshealth.sh started (Lab 6)"
+#run_health_checks
+#generate_report
+#if [ -n "$OUTPUT_FILE" ]; then
+#generate_report > "$OUTPUT_FILE"
+#echo "Report written to $OUTPUT_FILE"
+#log_message "INFO" "Report written to $OUTPUT_FILE"
+#else
+#generate_report
+#fi
+#exit "${HEALTH_STATUS:-0}"
+#}
 
 main

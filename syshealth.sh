@@ -409,6 +409,32 @@ exit 0
 }
 
 
+run_mode() {
+case "${MODE:-report}" in 
+monitor)
+log_message "INFO" "Running in MONITOR mode"
+print_status "CHECK" "Running health checksonly..." run_health_checks
+;;
+analyze)
+log_message "INFO" "Running in ANALYZE mode"
+printf"========================================\n"
+printf "LOG ANALYSIS ONLY\n"
+printf "========================================\n"
+analyze_logs
+;;
+report)
+log_message "INFO" "Running in REPORT mode (full)"
+run_health_checks || true
+if [ -n "$OUTPUT_FILE" ]; then generate_report > "$OUTPUT_FILE"
+echo "Full report written to $OUTPUT_FILE"
+else
+fi
+;;
+*)
+generate_report
+esac
+}
+
 
 
 
